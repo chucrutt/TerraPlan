@@ -1,5 +1,10 @@
 from django.contrib import admin
-from .models import Planta, Compatibilidad, Planificacion
+from .models import Planta, Compatibilidad, Planificacion, Perfil
+
+@admin.register(Perfil)
+class PerfilAdmin(admin.ModelAdmin):
+    list_display = ('usuario', 'experiencia', 'ubicacion')
+    search_fields = ('usuario__username', 'ubicacion')
 
 @admin.register(Planta)
 class PlantaAdmin(admin.ModelAdmin):

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Catálogo de Plantas - TerraPlan</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; background: #fdfdfd;}
+        .container { max-width: 900px; margin: 0 auto; }
+        .nav-bar { display: flex; justify-content: space-between; align-items: center; background: white; padding: 15px 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .filter-box { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); display: flex; gap: 15px; align-items: center;}
+        .filter-box input, .filter-box select { padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; }
+        .btn { padding: 8px 15px; background: #2e7d32; color: white; border: none; border-radius: 4px; cursor: pointer; text-decoration: none;}
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+        .card { background: white; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); overflow: hidden; }
+        .card-header { background: #4caf50; color: white; padding: 15px; }
+        .card-header h3 { margin: 0; }
+        .card-body { padding: 15px; font-size: 14px; color: #444;}
+        .tag { display: inline-block; padding: 3px 8px; border-radius: 12px; font-size: 12px; color: white; margin-bottom: 10px;}
+        .tag-alta { background: #ff9800; }
+        .tag-media { background: #ffc107; }
+        .tag-baja { background: #607d8b; }
+        .relacion { margin-top: 10px; font-size: 13px;}
+        .relacion strong { color: #333; }
+        .ayuda { color: #2e7d32; }
+        .compite { color: #c62828; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="nav-bar">
+            <div>
+                <strong>🌱 TerraPlan</strong> 
+                | <a href="{% url 'dashboard' %}" style="text-decoration: none; color: #2e7d32; margin-left: 10px;">Mis Huertos</a>
+                | <strong style="margin-left: 10px;">Catálogo</strong>
+            </div>
+            <div>
+                {% if user.is_authenticated %}
+                    <span style="color: #2e7d32; margin-right: 15px;">Hola, {{ user.username }}!</span>
+                    <form method="POST" action="{% url 'logout' %}" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" style="background: none; border: none; color: #c62828; text-decoration: underline; cursor: pointer;">Cerrar Sesión</button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'login' %}" style="color: #2e7d32; text-decoration: none;">Inicia Sesión</a>
+                {% endif %}
+            </div>
+        </div>
+
+        <h2>Enciclopedia Botánica</h2>
+        
+        <!-- FORMULARIO DE BÚSQUEDA Y FILTRO -->
+        <form method="GET" class="filter-box">
+            <input type="text" name="q" placeholder="Buscar planta por nombre..." value="{{ query }}" style="flex-grow: 1;">
+            <select name="sol">
+                <option value="">-- Filtrar por Necesidad de Sol --</option>
+                {% for code, label in opciones_sol %}
+                    <option value="{{ code }}" {% if sol_filtro == code %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="btn">Filtrar</button>
+            <a href="{% url 'catalogo' %}" class="btn" style="background: #757575;">Limpiar</a>
+        </form>
+
+        <div class="grid">
+            {% for item in catalogo_data %}
+            <div class="card">
+                <div class="card-header">
+                    <h3>{{ item.planta.nombre }}</h3>
+                </div>
+                <div class="card-body">
+                    {% if item.planta.necesidad_sol == 'ALTA' %}
+                        <span class="tag tag-alta">☀️ Sol Directo</span>
+                    {% elif item.planta.necesidad_sol == 'MEDIA' %}
+                        <span class="tag tag-media">⛅ Sombra Parcial</span>
+                    {% else %}
+                        <span class="tag tag-baja">☁️ Sombra Total</span>
+                    {% endif %}
+                    
+                    <p><strong>Separación requerida:</strong> {{ item.planta.distancia_minima_separacion }} cm</p>
+                    <p><strong>pH Óptimo:</strong> {{ item.planta.ph_optimo_suelo }}</p>
+                    <hr style="border-top:1px solid #eee; border-inline:0;">
+                    
+                    <!-- Simulación de Compatibilidades -->
+                    <div class="relacion">
+                        <strong>Relaciones biológicas:</strong><br>
+                        {% if item.ayudan %}
+                            <span class="ayuda">✔ Ayuda a:</span> {{ item.ayudan|join:", " }}<br>
+                        {% endif %}
+                        {% if item.compiten %}
+                            <span class="compite">❌ Compite con:</span> {{ item.compiten|join:", " }}<br>
+                        {% endif %}
+                        {% if not item.ayudan and not item.compiten %}
+                            <span style="color:#888;">Neutro con el resto de especies.</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+                <p style="text-align: center; width: 100%; color: #666; padding: 20px;">No se encontraron plantas con esos criterios.</p>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>

@@ -1,4 +1,34 @@
 from django.db import models
+from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
+# Modelo de Perfil para expandir los datos del Usuario estándar
+class Perfil(models.Model):
+    usuario = models.OneToOneField(User, on_delete=models.CASCADE)
+    ubicacion = models.CharField(max_length=150, blank=True, help_text="Ciudad o región del huerto")
+    experiencia = models.CharField(
+        max_length=50, 
+        choices=[('PRINCIPIANTE', 'Principiante'), ('INTERMEDIO', 'Intermedio'), ('EXPERTO', 'Experto')],
+        default='PRINCIPIANTE'
+    )
+
+    class Meta:
+        verbose_name_plural = "Perfiles"
+
+    def __str__(self):
+        return f"Perfil de {self.usuario.username}"
+
+# Señales para crear automáticamente un Perfil cada vez que se registra un Usuario
+@receiver(post_save, sender=User)
+def crear_perfil_usuario(sender, instance, created, **kwargs):
+    if created:
+        Perfil.objects.create(usuario=instance)
+
+@receiver(post_save, sender=User)
+def guardar_perfil_usuario(sender, instance, **kwargs):
+    instance.perfil.save()
+
 
 class Planta(models.Model):
     NECESIDAD_SOL_CHOICES = [
@@ -42,6 +72,8 @@ class Compatibilidad(models.Model):
 
 
 class Planificacion(models.Model):
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='planificaciones', null=True, blank=True)
+    nombre = models.CharField(max_length=150, default="Mi Huerto")
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     ancho_terreno = models.FloatField(help_text="Ancho del terreno en metros")
     largo_terreno = models.FloatField(help_text="Largo del terreno en metros")

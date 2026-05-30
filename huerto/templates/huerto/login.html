@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Iniciar Sesión - TerraPlan</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; background: #f4f4f4;}
+        .container { max-width: 400px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        h2 { color: #2e7d32; text-align: center; }
+        .form-group { margin-bottom: 15px; }
+        input[type="text"], input[type="password"] { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        button { width: 100%; padding: 10px 20px; font-size: 16px; background: #2e7d32; color: white; border: none; border-radius: 5px; cursor: pointer; margin-top: 15px;}
+        .links { text-align: center; margin-top: 15px; font-size: 14px;}
+        .links a { color: #2e7d32; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>🌱 Iniciar Sesión</h2>
+        <form method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Entrar a mi Huerto</button>
+        </form>
+        <div class="links">
+            <p>¿No tienes cuenta? <a href="{% url 'registro' %}">Regístrate aquí</a></p>
+        </div>
+    </div>
+</body>
+</html>

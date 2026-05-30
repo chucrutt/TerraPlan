@@ -112,6 +112,11 @@ USE_I18N = True
 USE_TZ = True
 
 
+# Configuración para autenticación y redirecciones
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/login/'
+LOGIN_URL = '/login/'
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 

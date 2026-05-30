@@ -14,11 +14,40 @@
 </head>
 <body>
     <div class="container">
-        <h1>🌱 Planificador Espacial de Huerto</h1>
-        <p>Ingresa las dimensiones de tu parcela y las plantas que deseas combinar.</p>
+        <!-- BARRA DE NAVEGACIÓN Y USUARIO -->
+        <div style="display: flex; justify-content: space-between; align-items: center; background: white; padding: 15px 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+            <div>
+                <strong>🌱 TerraPlan</strong> 
+                | <a href="{% url 'dashboard' %}" style="text-decoration: none; color: #2e7d32; margin-left: 10px;">Mis Huertos</a>
+                | <a href="{% url 'catalogo' %}" style="text-decoration: none; color: #2e7d32; margin-left: 10px;">Catálogo</a>
+            </div>
+            <div>
+                {% if user.is_authenticated %}
+                    <span style="color: #2e7d32; margin-right: 15px;">Hola, {{ user.username }}!</span>
+                    
+                    <form method="POST" action="{% url 'logout' %}" style="display: inline; margin: 0; padding: 0; background: none; border: none;">
+                        {% csrf_token %}
+                        <button type="submit" style="background: none; border: none; color: #c62828; text-decoration: underline; cursor: pointer; padding: 0; font-size: 14px;">
+                            Cerrar Sesión
+                        </button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'login' %}" style="color: #2e7d32; text-decoration: none; margin-right: 15px;">Inicia Sesión</a>
+                    <a href="{% url 'registro' %}" style="background: #2e7d32; color: white; padding: 8px 15px; border-radius: 5px; text-decoration: none; font-size: 14px;">Registrarse</a>
+                {% endif %}
+            </div>
+        </div>
+
+        <h1>{% if es_edicion %}Editar Huerto: {{ resultado.nombre }}{% else %}Crear Nuevo Huerto Espacial{% endif %}</h1>
+        <p>Configura las dimensiones de tu parcela y las plantas que deseas combinar.</p>
 
         <form method="POST">
             {% csrf_token %}
+            
+            <div style="margin-bottom: 15px;">
+                {{ form.nombre.label_tag }}<br>
+                {{ form.nombre }}
+            </div>
             <div style="display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap;">
                 <div>
                     {{ form.ancho_terreno.label_tag }}<br>
@@ -33,7 +62,7 @@
             <h3 style="margin-top: 10px;">Indica la cantidad que deseas de cada planta:</h3>
             <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; margin-bottom: 20px; padding: 15px; border: 1px solid #ccc; border-radius: 5px; background: white;">
                 {% for field in form %}
-                    {% if field.name != 'ancho_terreno' and field.name != 'largo_terreno' %}
+                    {% if field.name != 'nombre' and field.name != 'ancho_terreno' and field.name != 'largo_terreno' %}
                     <div style="display: flex; flex-direction: column; align-items: flex-start;">
                         {{ field.label_tag }}
                         {{ field }}
@@ -48,8 +77,8 @@
         </form>
 
         {% if resultado %}
-        <div class="resultado">
-            <h2>Planificación de Huerto Generada (#{{ resultado.id }})</h2>
+        <div class="resultado" style="margin-top: 30px;">
+            <h2>Simulación Generada para: {{ resultado.nombre }}</h2>
             <p><strong>Dimensiones:</strong> {{ resultado.ancho_terreno }}m x {{ resultado.largo_terreno }}m</p>
             
             {% if resultado.distribucion_calculada.no_ubicadas %}

@@ -1,7 +1,5 @@
 # Product Backlog - TerraPlan
 
-Este documento mantiene la lista centralizada, dinámica y priorizada de los requerimientos, funcionalidades y mejoras técnicas para el proyecto **TerraPlan**. 
-
 ---
 
 ## 1. Completado (Done - MVP y Funcionalidad Base)

@@ -1,7 +1,7 @@
 # TerraPlan
 
 ## ¿Qué es TerraPlan?
-TerraPlan es una plataforma web interactiva diseñada para optimizar la distribución biológica y espacial de un huerto urbano. 
+TerraPlan es una plataforma web interactiva diseñada para optimizar la distribución biológica y espacial de un huerto urbano.
 
 ### Problema que resuelve
 Planear un huerto es un desafío complejo, ya que requiere conocer qué plantas son compatibles entre sí (asociación de cultivos), qué distancias espaciales necesitan para crecer sin competir por nutrientes, y qué requerimientos de luz tienen. Un diseño incorrecto lleva a plagas, bajo rendimiento y frustración. TerraPlan automatiza de forma inteligente estos cálculos matemáticos y botánicos, entregando un plano visual de cultivo listo para usar.
